@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import getLayer from "./getLayer.js";
-import { OrbitControls } from "jsm/controls/OrbitControls.js";
+import { OrbitControls } from 'jsm/controls/OrbitControls.js';
+import { GLTFLoader } from 'jsm/loaders/GLTFLoader.js';
+
 
 const w = window.innerWidth;
 const h = window.innerHeight;
@@ -14,12 +16,23 @@ document.body.appendChild(renderer.domElement);
 const ctrls = new OrbitControls(camera, renderer.domElement);
 ctrls.enableDamping = true;
 
+const gltfloader = new GLTFLoader();
+gltfloader.load('./assets/source/McLaren.glb', (gltf) => {
+  const mclaren = gltf.scene;
+  mclaren.traverse((child) => {
+    if(child.isMesh) {
+      child.geometry.center();
+    }
+  });
+  scene.add(mclaren);
+});
+
 const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshStandardMaterial({
   color: 0xffff00,
 });
 const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+//scene.add(cube);
 
 const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
 scene.add(hemiLight);
